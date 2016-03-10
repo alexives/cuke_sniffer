@@ -361,7 +361,7 @@ describe "StepDefinitionRules" do
   end
 
   before(:each) do
-    @cli = CukeSniffer::CLI.new()
+    @cli = CukeSniffer::CLI.new(CukeSniffer::Config.new)
   end
 
   after(:all) do

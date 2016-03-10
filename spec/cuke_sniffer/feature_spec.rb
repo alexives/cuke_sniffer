@@ -244,7 +244,7 @@ describe "FeatureRules" do
 
   before(:each) do
     @file_name = "my_feature.feature"
-    @cli = CukeSniffer::CLI.new()
+    @cli = CukeSniffer::CLI.new(CukeSniffer::Config.new)
   end
 
   after(:each) do

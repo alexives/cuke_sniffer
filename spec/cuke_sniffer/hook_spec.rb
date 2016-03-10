@@ -164,7 +164,7 @@ describe "HookRules" do
   end
 
   before(:each) do
-    @cli = CukeSniffer::CLI.new()
+    @cli = CukeSniffer::CLI.new(CukeSniffer::Config.new)
     @file_name = "hooks.rb"
   end
 

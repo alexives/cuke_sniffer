@@ -1,0 +1,5 @@
+# When loaded, this will match to directories relative to the project_location.
+project_location: examples/complex_project
+features_location: features/features/scenarios
+step_definitions_location: features/features/step_definitions
+hooks_location: features/features/support

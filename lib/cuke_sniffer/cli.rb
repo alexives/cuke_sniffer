@@ -1,4 +1,5 @@
 require 'cuke_sniffer/constants'
+require 'cuke_sniffer/config'
 require 'cuke_sniffer/dead_steps_helper'
 require 'cuke_sniffer/feature'
 require 'cuke_sniffer/hook'
@@ -97,8 +98,8 @@ module CukeSniffer
     # Handles creation of all Feature and StepDefinition objects
     # Then catalogs all step definition calls to be used for rules and identification
     # of dead steps.
-    def initialize(parameters = {})
-      initialize_rule_targets(parameters)
+    def initialize(config)
+      initialize_rule_targets(config)
       evaluate_rules
       catalog_step_calls if @cataloged
       assess_score
@@ -200,37 +201,21 @@ module CukeSniffer
 
     private
 
-    def initialize_rule_targets(parameters)
-      initialize_locations(parameters)
-      initialize_feature_objects
-
-      puts("\nStep Definitions: ")
-      @step_definitions = build_objects_for_extension_from_location(@step_definitions_location, "rb") { |location| build_step_definitions(location) }
-
-      puts("\nHooks:")
-      @hooks = build_objects_for_extension_from_location(@hooks_location, "rb") { |location| build_hooks(location) }
-
-      initialize_catalog_status(parameters)
-    end
-
-    def initialize_locations(parameters)
-      @features_location = parameters[:features_location] ? parameters[:features_location] : Dir.getwd
-      @step_definitions_location = parameters[:step_definitions_location] ? parameters[:step_definitions_location] : Dir.getwd
-      @hooks_location = parameters[:hooks_location] ? parameters[:hooks_location] : Dir.getwd
-    end
-
-    def initialize_feature_objects
+    def initialize_rule_targets(config)
+      @features_location = config.features_location
+      @step_definitions_location = config.step_definitions_location
+      @hooks_location = config.hooks_location
       puts "\nFeatures:"
       @features = build_objects_for_extension_from_location(features_location, "feature") { |location| CukeSniffer::Feature.new(location) }
       @scenarios = CukeSniffer::CukeSnifferHelper.get_all_scenarios(@features)
-    end
 
-    def initialize_catalog_status(parameters)
-      if parameters[:no_catalog] == true
-        @cataloged = false
-      else
-        @cataloged = true
-      end
+      puts "\nStep Definitions:"
+      @step_definitions = build_objects_for_extension_from_location(@step_definitions_location, "rb") { |location| build_step_definitions(location) }
+
+      puts "\nHooks:"
+      @hooks = build_objects_for_extension_from_location(@hooks_location, "rb") { |location| build_hooks(location) }
+
+      @cataloged = config.cataloged
     end
 
     def evaluate_rules

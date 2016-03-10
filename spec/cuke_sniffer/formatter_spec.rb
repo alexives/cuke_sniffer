@@ -16,7 +16,7 @@ describe CukeSniffer::Formatter do
       @file_name = "my_feature.feature"
       build_file(["Feature: I am a feature"], @file_name)
 
-      cuke_sniffer = CukeSniffer::CLI.new()
+      cuke_sniffer = CukeSniffer::CLI.new(CukeSniffer::Config.new)
 
       big_feature = CukeSniffer::Feature.new(@file_name)
       big_feature.total_score = 20
@@ -36,7 +36,7 @@ describe CukeSniffer::Formatter do
                            "end"]
       step_def_location = "my_steps.rb:1"
 
-      cuke_sniffer = CukeSniffer::CLI.new()
+      cuke_sniffer = CukeSniffer::CLI.new(CukeSniffer::Config.new)
 
       big_step = CukeSniffer::StepDefinition.new(step_def_location, step_def_raw_code)
       big_step.score = 10
@@ -56,7 +56,7 @@ describe CukeSniffer::Formatter do
                        "end"]
       hook_location = "location.rb:1"
 
-      cuke_sniffer = CukeSniffer::CLI.new()
+      cuke_sniffer = CukeSniffer::CLI.new(CukeSniffer::Config.new)
       big_hook = CukeSniffer::Hook.new(hook_location, hook_raw_code)
       big_hook.score = 10
 
@@ -70,7 +70,7 @@ describe CukeSniffer::Formatter do
     end
 
     it "should order the rules in descending order by score." do
-      cuke_sniffer = CukeSniffer::CLI.new()
+      cuke_sniffer = CukeSniffer::CLI.new(CukeSniffer::Config.new)
 
       big_rule = CukeSniffer::Rule.new()
       big_rule.score = 100
@@ -92,7 +92,7 @@ describe CukeSniffer::Formatter do
       @file_name = 'test_output'
       file_output = File.new( @file_name, 'w' )
       $stdout = file_output
-      cuke_sniffer = CukeSniffer::CLI.new()
+      cuke_sniffer = CukeSniffer::CLI.new(CukeSniffer::Config.new)
       CukeSniffer::Formatter.output_console(cuke_sniffer)
       $stdout = STDOUT
       file_output.close
@@ -104,7 +104,7 @@ describe CukeSniffer::Formatter do
     def create_html_report_for_empty_type(type_location, location_name)
       Dir.delete(location_name) if Dir.exists?(location_name)
       Dir.mkdir(location_name)
-      cuke_sniffer = CukeSniffer::CLI.new({type_location => location_name})
+      cuke_sniffer = CukeSniffer::CLI.new(CukeSniffer::Config.new({type_location => location_name}))
       CukeSniffer::Formatter.output_html(cuke_sniffer)
       Dir.delete(location_name)
     end
@@ -118,19 +118,19 @@ describe CukeSniffer::Formatter do
     end
 
     it "should generate an html report." do
-      cuke_sniffer = CukeSniffer::CLI.new()
+      cuke_sniffer = CukeSniffer::CLI.new(CukeSniffer::Config.new)
       CukeSniffer::Formatter.output_html(cuke_sniffer, @file_name)
       File.exists?(@file_name).should == true
     end
 
     it "should append .html to the end of passed file name if it does not have the extension." do
-      cuke_sniffer = CukeSniffer::CLI.new()
+      cuke_sniffer = CukeSniffer::CLI.new(CukeSniffer::Config.new)
       CukeSniffer::Formatter.output_html(cuke_sniffer, "my_html")
       File.exists?("my_html.html").should be_true
     end
 
     it "should have a minimum output mode where only cuke_sniffer details are present." do
-      cuke_sniffer = CukeSniffer::CLI.new()
+      cuke_sniffer = CukeSniffer::CLI.new(CukeSniffer::Config.new)
       CukeSniffer::Formatter.output_min_html(cuke_sniffer, @file_name)
       File.exists?(@file_name).should == true
     end
@@ -177,7 +177,7 @@ describe CukeSniffer::Formatter do
         @file_name = "my_feature.feature"
         build_file(feature_block, @file_name)
 
-        cuke_sniffer = CukeSniffer::CLI.new({:features_location => @file_name})
+        cuke_sniffer = CukeSniffer::CLI.new(CukeSniffer::Config.new({:features_location => @file_name}))
         CukeSniffer::Formatter.output_html(cuke_sniffer)
 
         expected_message = "Excellent! No smells found for Features and Scenarios!"
@@ -200,7 +200,7 @@ describe CukeSniffer::Formatter do
         @file_name = "my_definition_steps.rb"
         build_file(step_definitions_block, @file_name)
 
-        cuke_sniffer = CukeSniffer::CLI.new({:step_definitions_location => @file_name})
+        cuke_sniffer = CukeSniffer::CLI.new(CukeSniffer::Config.new({:step_definitions_location => @file_name}))
         CukeSniffer::Formatter.output_html(cuke_sniffer)
 
         expected_message = "Excellent! No smells found for Step Definitions!"
@@ -225,7 +225,7 @@ describe CukeSniffer::Formatter do
         @file_name = "my_hooks.rb"
         build_file(hook_block, @file_name)
 
-        cuke_sniffer = CukeSniffer::CLI.new({:hooks_location => @file_name})
+        cuke_sniffer = CukeSniffer::CLI.new(CukeSniffer::Config.new({:hooks_location => @file_name}))
         CukeSniffer::Formatter.output_html(cuke_sniffer)
 
         expected_message = "Excellent! No smells found for Hooks!"
@@ -242,13 +242,13 @@ describe CukeSniffer::Formatter do
     end
 
     it "should generate a well formed xml of the content by respectable sections" do
-      cuke_sniffer = CukeSniffer::CLI.new()
+      cuke_sniffer = CukeSniffer::CLI.new(CukeSniffer::Config.new)
       CukeSniffer::Formatter.output_xml(cuke_sniffer, @file_name)
       File.exists?(@file_name).should == true
     end
 
     it "should append .xml to the end of passed file name if it does have an extension already" do
-      cuke_sniffer = CukeSniffer::CLI.new()
+      cuke_sniffer = CukeSniffer::CLI.new(CukeSniffer::Config.new)
       CukeSniffer::Formatter.output_xml(cuke_sniffer, "my_xml")
       File.exists?("my_xml.xml").should be_true
     end
@@ -261,13 +261,13 @@ describe CukeSniffer::Formatter do
     end
 
     it "should generate a junit xml file with failures by file" do
-      cuke_sniffer = CukeSniffer::CLI.new()
+      cuke_sniffer = CukeSniffer::CLI.new(CukeSniffer::Config.new)
       CukeSniffer::Formatter.output_junit_xml(cuke_sniffer, @file_name)
       File.exists?(@file_name).should == true
     end
 
     it "should generate results that look like junit xml" do
-      cuke_sniffer = CukeSniffer::CLI.new()
+      cuke_sniffer = CukeSniffer::CLI.new(CukeSniffer::Config.new)
       xml = CukeSniffer::Formatter.output_junit_xml(cuke_sniffer, @file_name)
 
       expect(xml).to match(/<testsuites/)
@@ -280,7 +280,7 @@ describe CukeSniffer::Formatter do
     end
 
     it "should append .xml to the end of passed file name if it does have an extension already" do
-      cuke_sniffer = CukeSniffer::CLI.new()
+      cuke_sniffer = CukeSniffer::CLI.new(CukeSniffer::Config.new)
       CukeSniffer::Formatter.output_junit_xml(cuke_sniffer, "my_xml")
       File.exists?("my_xml.xml").should be_true
     end
