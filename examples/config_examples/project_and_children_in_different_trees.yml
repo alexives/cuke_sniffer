@@ -1,0 +1,6 @@
+# In this case, the files are loaded from their specific paths, and the project_location
+# is disreguarded.
+features_location: examples/complex_project/features/features/scenarios
+step_definitions_location: examples/complex_project/features/features/step_definitions
+hooks_location: examples/complex_project/features/features/support
+project_location: examples/simple_project

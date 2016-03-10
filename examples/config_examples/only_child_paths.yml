@@ -1,0 +1,5 @@
+# In the case of this config file, it would load the features steps and hooks
+# exactly as they are mentioned here.
+features_location: examples/complex_project/features/features/scenarios
+step_definitions_location: examples/complex_project/features/features/step_definitions
+hooks_location: examples/complex_project/features/features/support

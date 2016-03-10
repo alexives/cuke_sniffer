@@ -18,6 +18,7 @@ module CukeSniffer
 
     MARKUP_SOURCE = File.join(File.dirname(__FILE__), 'report')
     DEFAULT_OUTPUT_FILE_NAME = "cuke_sniffer_result"
+    DEFAULT_CONFIG_FILE_NAME = ".cuke_sniffer.yml"
 
     # hash: Stores scores to compare against for determining if an object is good
     # * Key: String of the object name

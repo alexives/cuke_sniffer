@@ -14,7 +14,7 @@ describe CukeSniffer::RulesEvaluator do
   end
 
   before(:each) do
-    @cli = CukeSniffer::CLI.new()
+    @cli = CukeSniffer::CLI.new(CukeSniffer::Config.new)
     @file_name = "my_feature.feature"
   end
 
@@ -37,11 +37,11 @@ describe CukeSniffer::RulesEvaluator do
   end
 
   it "should throw an exception when Rules are nil" do
-    expect {CukeSniffer::RulesEvaluator.new(CukeSniffer::CLI.new(), nil) }.to raise_error("Rules must be provided for evaluation.")
+    expect {CukeSniffer::RulesEvaluator.new(CukeSniffer::CLI.new(CukeSniffer::Config.new), nil) }.to raise_error("Rules must be provided for evaluation.")
   end
 
   it "should throw an exception when Rules are empty" do
-    expect {CukeSniffer::RulesEvaluator.new(CukeSniffer::CLI.new(), [])}.to raise_error("Rules must be provided for evaluation.")
+    expect {CukeSniffer::RulesEvaluator.new(CukeSniffer::CLI.new(CukeSniffer::Config.new), [])}.to raise_error("Rules must be provided for evaluation.")
   end
 
   it "should throw an exception when a Rule has nil targets" do

@@ -9,8 +9,9 @@ Other Options for Running include:
   -o, --out <type> (name)                   : Where <type> is 'html', 'min_html', 'junit_xml' or 'xml'.
                                               Runs CukeSniffer then outputs an
                                               html/xml file in the current
-                                              directory (with optional name).
+                                              directory (with optional name, default: #{CukeSniffer::Constants::DEFAULT_OUTPUT_FILE_NAME}).
   -h,  --help                               : You get this lovely document.
+  -c,  --config <config_file>               : A specified yaml config file (Defaults to #{CukeSniffer::Constants::DEFAULT_CONFIG_FILE_NAME})
   -p,  --project <project_root>             : Root directory of project.
   -f,  --features <feature_path>            : Path to features directory.
   -s,  --step_definitions <step_def_path>   : Path to step definitions directory.
@@ -30,7 +31,8 @@ def build_cli_hash(argv)
       :hooks_location => /-hk|--hooks/,
       :features_location => /-f|--features/,
       :step_definitions_location => /-s|--step_definitions/,
-      :project_location => /-p|--project/}
+      :project_location => /-p|--project/,
+      :config_file => /-c|--config/}
 
   cli_hash = {}
   cucumber_hash.each do |symbol, regex|
@@ -39,34 +41,29 @@ def build_cli_hash(argv)
       cli_hash[symbol] = argv[index_of_key + 1]
     end
   end
-
-  cli_hash[:no_catalog] = true if find_index_by_regex_match(argv, /-nc|--no_catalog/)
-  cli_hash
-end
-
-def handle_output(argv)
   if find_index_by_regex_match(argv, /-o|--out/)
     output_type_hash = {
-        :html => "html",
-        :min_html => "min_html",
-        :xml => "xml",
-        :junit_xml => "junit_xml",
+      :html => "html",
+      :min_html => "min_html",
+      :xml => "xml",
+      :junit_xml => "junit_xml",
     }
     output_type_hash.each_value do |value|
       index_of_key = argv.index(value)
       if !index_of_key.nil?
-        file_type = argv[index_of_key]
-        file_name = argv[index_of_key+1]
-        call_output(file_type, file_name)
+        cli_hash[:file_format] = argv[index_of_key]
+        cli_hash[:file_name] = argv[index_of_key+1]
       end
     end
-  else
-    puts @cuke_sniffer.output_results
   end
+  cli_hash[:no_catalog] = true if find_index_by_regex_match(argv, /-nc|--no_catalog/)
+  cli_hash
 end
 
-def call_output(file_type, file_name)
+def output(file_type, file_name)
   case file_type
+    when "stdout"
+      puts @cuke_sniffer.output_results
     when "xml"
       file_name.nil? ? @cuke_sniffer.output_xml  : @cuke_sniffer.output_xml(file_name)
     when "html"
@@ -86,8 +83,8 @@ if ARGV.include? "-h" or ARGV.include? "--help"
 end
 
 arguments_hash = build_cli_hash(ARGV)
-@cuke_sniffer = CukeSniffer::CLI.new(arguments_hash)
-handle_output(ARGV)
-
+config = CukeSniffer::Config.new(arguments_hash)
+@cuke_sniffer = CukeSniffer::CLI.new(config)
+output(config.output_format, config.output_file)
 
 puts "Completed Sniffing."

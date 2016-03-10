@@ -1,0 +1,5 @@
+# In this case, the file is only extra verbose and project_location is more or less disreguarded.
+project_location: examples/complex_project
+features_location: examples/complex_project/features/features/scenarios
+step_definitions_location: examples/complex_project/features/features/step_definitions
+hooks_location: examples/complex_project/features/features/support

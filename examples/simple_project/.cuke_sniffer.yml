@@ -1,0 +1,9 @@
+# This determines the output format From the command line this would be the same as `-o xml cs_results.xml`
+output:
+  format: html
+  file: cuke_sniffer_result.html
+
+project_location: examples/simple_project
+
+# Setting this to false is the same as specifying --no_catalog
+cataloged: true
