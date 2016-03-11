@@ -3,6 +3,7 @@ output:
   format: xml
   file: cuke_sniffer_result.xml
 
+# These are various files.
 project_location: examples/complex_project
 features_location: features/features/scenarios
 step_definitions_location: features/features/step_definitions
@@ -10,3 +11,19 @@ hooks_location: features/features/support
 
 # Setting this to false is the same as specifying --no_catalog
 cataloged: true
+
+# These rules are merged into the primary rules hash at runtime.
+# Currently, they have to start with a : so that ruby will
+# symbolize them.
+rules:
+  :too_many_scenarios:
+    :enabled: false
+  :date_used:
+    :phrase: "Don't use dates, they make things harder to test!"
+  :no_examples:
+    :enabled: false
+  :commas_in_description:
+    :enabled: false
+    :target:
+      - Feature
+      - Scenario

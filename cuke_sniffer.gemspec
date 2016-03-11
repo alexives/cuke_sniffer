@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
              'lib/cuke_sniffer/report/legend.html.erb',
              'lib/cuke_sniffer.rb',
              'lib/cuke_sniffer/constants.rb',
+             'lib/cuke_sniffer/config.rb',
              'lib/cuke_sniffer/feature.rb',
              'lib/cuke_sniffer/feature_rules_evaluator.rb',
              'lib/cuke_sniffer/rule_target.rb',

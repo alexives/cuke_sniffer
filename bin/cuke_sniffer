@@ -17,6 +17,7 @@ Other Options for Running include:
   -s,  --step_definitions <step_def_path>   : Path to step definitions directory.
   -hk, --hooks <hooks_path>                 : Path to support directory.
   -nc, --no_catalog                         : Disable cataloging of steps. Reduced runtime and no
+  -ud, --use-default-rules                  : Disable rule overrides present in the config file.
 "
 
 def find_index_by_regex_match(list, regex)
@@ -32,31 +33,22 @@ def build_cli_hash(argv)
       :features_location => /-f|--features/,
       :step_definitions_location => /-s|--step_definitions/,
       :project_location => /-p|--project/,
-      :config_file => /-c|--config/}
+      :config_file => /-c|--config/,
+      :file_format => /-o|--out/}
 
   cli_hash = {}
   cucumber_hash.each do |symbol, regex|
     index_of_key = find_index_by_regex_match(argv, regex)
     if !index_of_key.nil?
       cli_hash[symbol] = argv[index_of_key + 1]
-    end
-  end
-  if find_index_by_regex_match(argv, /-o|--out/)
-    output_type_hash = {
-      :html => "html",
-      :min_html => "min_html",
-      :xml => "xml",
-      :junit_xml => "junit_xml",
-    }
-    output_type_hash.each_value do |value|
-      index_of_key = argv.index(value)
-      if !index_of_key.nil?
-        cli_hash[:file_format] = argv[index_of_key]
-        cli_hash[:file_name] = argv[index_of_key+1]
+      # Special handling for file format.
+      if symbol == :file_format
+        cli_hash[:file_name]  = argv[index_of_key + 2]
       end
     end
   end
   cli_hash[:no_catalog] = true if find_index_by_regex_match(argv, /-nc|--no_catalog/)
+  cli_hash[:use_default_rules] = true if find_index_by_regex_match(argv, /-ud|--use-default-rules/)
   cli_hash
 end
 

@@ -16,10 +16,13 @@ module CukeSniffer
     # Used by bin/cuke_sniffer to determine what/how it should output results.
     attr_accessor :output_file, :output_format
 
+    attr_accessor :rules
+
     def initialize(parameters = {})
       raw_config = initialize_raw_config(parameters)
       initialize_source_paths(parameters, raw_config)
       initialize_cataloged(parameters, raw_config)
+      initialize_rules(parameters, raw_config)
       initialize_output(parameters, raw_config)
     end
 
@@ -59,21 +62,22 @@ module CukeSniffer
     # Given the cli provided parameters and a raw config yaml, initalize the
     # output file information
     def initialize_output(parameters, raw_config)
-      if parameters[:output_format]
-        @output_format = parameters[:output_format]
+      if parameters[:file_format]
+        @output_format = parameters[:file_format]
+        @output_file = parameters[:file_name] || CukeSniffer::Constants::DEFAULT_OUTPUT_FILE_NAME
       elsif raw_config["output"] && raw_config["output"]["format"]
         @output_format = raw_config["output"]["format"]
+        @output_file = raw_config["output"]["file"] || CukeSniffer::Constants::DEFAULT_OUTPUT_FILE_NAME
       else
         @output_format = "stdout"
-      end
-      if @output_format.eql?("stdout")
         @output_file = nil
-      elsif parameters[:output_file]
-        @output_file = parameters[:output_file]
-      elsif raw_config["output"] && raw_config["output"]["file"]
-        @output_file = raw_config["output"]["file"]
-      else
-        @output_file = CukeSniffer::Constants::DEFAULT_OUTPUT_FILE_NAME
+      end
+    end
+
+    def initialize_rules(parameters, raw_config)
+      @rules = CukeSniffer::RuleConfig::RULES
+      unless parameters[:use_default_rules] || raw_config["rules"].nil?
+        @rules = CukeSniffer::CukeSnifferHelper.merge_rules(@rules,raw_config["rules"])
       end
     end
 

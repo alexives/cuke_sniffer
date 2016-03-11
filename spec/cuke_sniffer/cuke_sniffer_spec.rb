@@ -579,7 +579,7 @@ describe CukeSniffer do
   describe "Building Rules" do
 
     it "should build a list of rules."do
-      cuke_sniffer = CukeSniffer::CLI.new(CukeSniffer::Config.new)
+      cuke_sniffer = CukeSniffer::CLI.new(CukeSniffer::Config.new({:use_default_rules => true}))
 
       cuke_sniffer.rules.size.should == RULES.size
       cuke_sniffer.rules.first.phrase.should_not == nil

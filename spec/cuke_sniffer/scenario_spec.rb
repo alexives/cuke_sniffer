@@ -513,7 +513,7 @@ describe "ScenarioRules" do
 
   before(:each) do
     @file_name = "my_feature.feature"
-    @cli = CukeSniffer::CLI.new(CukeSniffer::Config.new)
+    @cli = CukeSniffer::CLI.new(CukeSniffer::Config.new({use_default_rules: true}))
   end
 
   after(:all) do

@@ -25,6 +25,9 @@ describe CukeSniffer::Config do
       expect(config.output_format).to eql("stdout")
       expect(config.output_file).to be_nil
     end
+    it "should ues the default rules set" do
+      expect_same_rules(config.rules, CukeSniffer::RuleConfig::RULES)
+    end
   end
 
   describe "project location speficied" do
@@ -49,11 +52,15 @@ describe CukeSniffer::Config do
       expect(config.output_format).to eql(raw_config["output"]["format"])
       expect(config.output_file).to eql(raw_config["output"]["file"])
     end
+    it "should ues the default rules set" do
+      expect_same_rules(config.rules, CukeSniffer::RuleConfig::RULES)
+    end
   end
 
   describe "complete config" do
     let(:config) {CukeSniffer::Config.new({config_file: "examples/complex_project/.cuke_sniffer.yml"})}
     let(:raw_config) {YAML.load_file("examples/complex_project/.cuke_sniffer.yml")}
+    let(:config_rules) {raw_config["rules"]}
     it "should use the specified directory for feature locations" do
       expect(config.features_location).to eql(raw_config["project_location"] + File::Separator + raw_config["features_location"])
     end
@@ -73,6 +80,10 @@ describe CukeSniffer::Config do
       expect(config.output_format).to eql(raw_config["output"]["format"])
       expect(config.output_file).to eql(raw_config["output"]["file"])
     end
+    it "should ues the default rules set" do
+      expect_same_rules(config.rules, CukeSniffer::CukeSnifferHelper.merge_rules(CukeSniffer::RuleConfig::RULES,config_rules))
+      expect(config.rules[:commas_in_description][:enabled]).to be_false
+    end
   end
 
   describe "config overridden with parameters" do
@@ -84,8 +95,9 @@ describe CukeSniffer::Config do
         :project_location => "examples/simple_project/",
         :no_catalog => false,
         :config_file => "examples/complex_project/.cuke_sniffer.yml",
-        :output_format => "html",
-        :output_file => "output.html"
+        :file_format => "html",
+        :file_name => "output.html",
+        :use_default_rules => true
       }
     end
     let(:config) {CukeSniffer::Config.new(parameters)}
@@ -107,6 +119,9 @@ describe CukeSniffer::Config do
     it "should output html to output.html" do
       expect(config.output_format).to eql("html")
       expect(config.output_file).to eql("output.html")
+    end
+    it "should ues the default rules set" do
+      expect_same_rules(config.rules, CukeSniffer::RuleConfig::RULES)
     end
   end
 
@@ -188,5 +203,27 @@ describe CukeSniffer::Config do
       expect(config.output_file).to be_nil
       expect(config.output_format).to eql("stdout")
     end
+  end
+
+  def expect_same_rules(hash_1,hash_2)
+    expect(difference_between_arrays(hash_1,hash_2)).to eql([])
+  end
+
+  def difference_between_arrays(hash_1, hash_2)
+    difference = hash_1.dup.values
+    hash_2.each_value do |element|
+      hash_1.each_value do |matches|
+        if element["phrase"].eql?(matches["phrase"]) &&
+          element["score"].eql?(matches["score"]) &&
+          element["targets"].eql?(matches["targets"]) &&
+          element["words"].eql?(matches["words"]) &&
+          element["max"].eql?(matches["max"]) &&
+          element["min"].eql?(matches["min"]) &&
+          element["file"].eql?(matches["file"])
+          difference.delete(matches)
+        end
+      end
+    end
+    difference
   end
 end

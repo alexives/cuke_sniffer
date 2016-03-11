@@ -100,7 +100,7 @@ module CukeSniffer
     # of dead steps.
     def initialize(config)
       initialize_rule_targets(config)
-      evaluate_rules
+      evaluate_rules(config)
       catalog_step_calls if @cataloged
       assess_score
     end
@@ -218,8 +218,8 @@ module CukeSniffer
       @cataloged = config.cataloged
     end
 
-    def evaluate_rules
-      @rules = CukeSniffer::CukeSnifferHelper.build_rules(RULES)
+    def evaluate_rules(config)
+      @rules = CukeSniffer::CukeSnifferHelper.build_rules(config.rules)
       CukeSniffer::RulesEvaluator.new(self, @rules)
     end
 

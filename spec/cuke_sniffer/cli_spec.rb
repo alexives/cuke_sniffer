@@ -18,6 +18,9 @@ describe CukeSniffer::CLI do
     it "should set cataloged => true" do
       expect(cli.cataloged).to be_true
     end
+    it "should use the default set of rules" do
+      expect_same_rules(cli.rules,CukeSniffer::CukeSnifferHelper.build_rules(CukeSniffer::RuleConfig::RULES))
+    end
   end
 
   context "options specified on command line" do
@@ -27,7 +30,8 @@ describe CukeSniffer::CLI do
         :step_definitions_location => "examples/complex_project/features/features/step_definitions",
         :hooks_location => "examples/complex_project/features/features/support",
         :no_catalog => true,
-        :config => ""
+        :config => "",
+        :use_default_rules => true
       }
     end
     let(:config) {CukeSniffer::Config.new(parameters)}
@@ -43,6 +47,9 @@ describe CukeSniffer::CLI do
     end
     it "should set cataloged => false" do
       expect(cli.cataloged).to be_false
+    end
+    it "should use the default set of rules" do
+      expect_same_rules(cli.rules,CukeSniffer::CukeSnifferHelper.build_rules(CukeSniffer::RuleConfig::RULES))
     end
   end
 
@@ -93,5 +100,23 @@ describe CukeSniffer::CLI do
     it "should set cataloged => true" do
       expect(cli.cataloged).to eql(raw_config["cataloged"])
     end
+  end
+
+  def expect_same_rules(array_1,array_2)
+    expect(difference_between_arrays(array_1,array_2)).to eql([])
+  end
+
+  def difference_between_arrays(array_1, array_2)
+    difference = array_1.to_ary.dup
+    array_2.to_ary.each do |element|
+      array_1.to_ary.each do |matches|
+        if element.phrase.eql?(matches.phrase) &&
+            element.score.eql?(matches.score) &&
+            element.targets.eql?(matches.targets)
+          difference.delete(matches)
+        end
+      end
+    end
+    difference
   end
 end

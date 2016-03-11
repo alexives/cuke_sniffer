@@ -21,6 +21,14 @@ module CukeSniffer
       steps
     end
 
+    # Merge two rules hashes.
+    def self.merge_rules(default,config)
+      config.each do |key,value|
+        default[key] = default[key].merge(value)
+      end
+      default
+    end
+
     # Iterates over the passed features list and returns all scenarios and backgrounds found.
     def self.get_all_scenarios(features)
       scenarios = []
